@@ -30,7 +30,7 @@ const dict = {
   'Removes your imported wallet, fork destinations, scan results and every plan with its PSBTs, signed files and progress. Keeps your network settings and any servers you added, and the web interface token. The network confirmation is reset, so you confirm it again. Nothing on any blockchain changes.': 26,
   'Even if sent transactions are not confirmed yet': 27,
   'splayed refuses while a transaction you sent is still unconfirmed, because wiping stops it from following that transaction. Switch this on only if you are sure.': 28,
-  'Get amnesia': 29,
+  'Burn history': 29,
   'Forget your wallet, scan results and plans, and start over. Keeps your servers and settings.': 30,
   'This deletes your plans and signed files for good. Back up first if you want to keep them.': 31,
   Data: 32,

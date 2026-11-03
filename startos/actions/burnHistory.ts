@@ -21,11 +21,11 @@ const inputSpec = InputSpec.of({
   }),
 })
 
-/** The web interface's "Get amnesia" button, as an action: `splayed wipe --yes`. */
-export const getAmnesia = sdk.Action.withInput(
-  'get-amnesia',
+/** The web interface's "Burn history" button, as an action: `splayed wipe --yes`. */
+export const burnHistory = sdk.Action.withInput(
+  'burn-history',
   async () => ({
-    name: i18n('Get amnesia'),
+    name: i18n('Burn history'),
     description: i18n(
       'Forget your wallet, scan results and plans, and start over. Keeps your servers and settings.',
     ),
@@ -56,7 +56,7 @@ export const getAmnesia = sdk.Action.withInput(
         mountpoint: dataDir,
         readonly: false,
       }),
-      'get-amnesia',
+      'burn-history',
       (sub) =>
         sub.exec(
           ['splayed', 'wipe', '--yes', ...(input.force ? ['--force'] : [])],
