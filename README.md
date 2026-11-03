@@ -32,15 +32,18 @@ no riscv64 build).
 
 One subcontainer, `splayed`, runs as the image's unprivileged user `splayed` (uid 10001):
 
-| Step          | Kind    | What it does                                                                    |
-| ------------- | ------- | ------------------------------------------------------------------------------- |
-| `chown`       | oneshot | As root: gives `/data` to `splayed`, mode 0700                                  |
-| `token`       | oneshot | Makes the UI access token on the first start (`splayed ui --new-token-file`)    |
-| `detect-node` | oneshot | With the node switched on: `splayed config backend detect --kind rpc ... --add` |
-| `ui`          | daemon  | `splayed ui` in proxied mode, listening on `0.0.0.0:8080`                       |
+| Step          | Kind    | What it does                                                                                     |
+| ------------- | ------- | ------------------------------------------------------------------------------------------------ |
+| `chown`       | oneshot | As root: gives `/data` to `splayed`, mode 0700                                                   |
+| `token`       | oneshot | Makes the UI access token on the first start (`splayed ui --new-token-file`)                     |
+| `detect-node` | oneshot | With the node switched on: `splayed config backend detect --kind rpc ... --add`                  |
+| `ui`          | daemon  | `splayed ui` in proxied mode, listening on `0.0.0.0:8080`                                        |
+| `node-watch`  | daemon  | With the node switched on: repeats the detect every 20 s until it works, then idles (no UI wait) |
 
-`detect-node` never fails the start: a node that is still starting or syncing logs a warning, and
-the next start tries again.
+`detect-node` never fails the start: a node that is still starting or syncing logs a warning. The
+check usually comes too early right after the RPC-login task, because bitcoind restarts to load
+the new login; `node-watch` keeps trying, so splayed picks the node up without a restart. Without
+a node, `node-watch` just sleeps.
 
 ## Volume and Data Layout
 
@@ -91,20 +94,26 @@ Outbound: public servers only through Tor; the node over the container bridge.
 
 ## Installation and First-Run Flow
 
-1. On the first start the `token` oneshot creates `/data/ui-token` (mode 0600).
-2. The user reads it with **Show UI token** and signs in on the Web UI.
-3. splayed's own setup guide follows (network review, wallet import, scan, plan). Nothing about the
+1. On a fresh install, if a Bitcoin node (`bitcoind`) is already installed, the package switches
+   **Use the Bitcoin node** on and makes the RPC login (the `seedNode` init handler). Without a
+   node nothing is switched on, so nobody is asked to install one; install it later and run the
+   **Use the Bitcoin node** action. Updates and restores keep the user's choice. With the node on,
+   the critical **Create RPC credentials** task must be run once before splayed starts.
+2. On the first start the `token` oneshot creates `/data/ui-token` (mode 0600).
+3. The user reads it with **Show UI token** and signs in on the Web UI.
+4. splayed's own setup guide follows (network review, wallet import, scan, plan). Nothing about the
    user's coins is sent anywhere before they confirm the network settings.
 
 The camera (QR import) works only over HTTPS, so the HTTPS LAN address or a domain is needed for it.
 
 ## Actions
 
-| Action               | Visibility | Status       | Effect                                                                                                                                 |
-| -------------------- | ---------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Show UI token        | enabled    | any          | Returns the token (masked, copyable)                                                                                                   |
-| Reset UI token       | enabled    | running only | Writes a new token, returns it, restarts splayed; open tabs must sign in again                                                         |
-| Use the Bitcoin node | enabled    | any          | Toggles `useBitcoind`; makes the RPC login the first time. Switching off leaves the node in splayed's settings (removed in the Web UI) |
+| Action               | Visibility | Status       | Effect                                                                                                                                                                                                                                                                                                                              |
+| -------------------- | ---------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Show UI token        | enabled    | any          | Returns the token (masked, copyable)                                                                                                                                                                                                                                                                                                |
+| Reset UI token       | enabled    | running only | Writes a new token, returns it, restarts splayed; open tabs must sign in again                                                                                                                                                                                                                                                      |
+| Use the Bitcoin node | enabled    | any          | Toggles `useBitcoind`; makes the RPC login the first time. Switching off leaves the node in splayed's settings (removed in the Web UI)                                                                                                                                                                                              |
+| Burn history         | enabled    | any          | Runs `splayed wipe --yes` (needs the "I understand" toggle; "Even if sent transactions are not confirmed yet" adds `--force`). Forgets the wallet, destinations, scan results and all plans, resets the network confirmation; keeps the network settings, added servers and the token. Same as the Web UI's **Burn history** button |
 
 ## Tasks
 
@@ -119,6 +128,25 @@ The camera (QR import) works only over HTTPS, so the HTTPS LAN address or a doma
 | Web interface | port 8080 is listening | `splayed ui` didn't start: read the logs (token file, settings) |
 
 The check doesn't make an HTTP request, because splayed answers only its allowed host names.
+
+## Your Data
+
+Everything splayed records lives on the `main` volume, so it survives restarts and package updates;
+uninstalling removes it (back up first). **Burn history** (action or Web UI button) clears the
+history without uninstalling.
+
+## Building
+
+The tools: `make`, `node`/`npm`, `jq` and `start-cli`, plus a packaging workspace (`start-cli s9pk
+init-workspace` in the folder that holds this repo). Clone with `--recurse-submodules`, then:
+
+```sh
+npm install --ignore-scripts
+make x86      # or: make arm
+```
+
+The result is `splayed_x86_64.s9pk` (sideload it under System > Sideload). A new package revision
+needs `startos/versions/` to keep every earlier version in `other`, so installed copies can update.
 
 ## Backups and Restore
 
@@ -142,6 +170,7 @@ the same token and node login work.
 package_id: 'splayed'
 image: 'dockerBuild upstream-project/docker/Dockerfile (WITH_TOR=0)'
 architectures: [x86_64, aarch64]
+version: '0.1.0:3'
 subcontainers: [splayed]
 volumes: { main: /data, startos: store.json }
 file_models: [store.json]
@@ -157,7 +186,7 @@ startos_managed_env_vars:
   ]
 dependencies: [tor (required), bitcoind (optional)]
 interfaces: { ui: 8080 }
-actions: [show-ui-token, reset-ui-token, use-bitcoind]
+actions: [show-ui-token, reset-ui-token, use-bitcoind, burn-history]
 tasks: [bitcoind generate-rpc-dependent]
 health_checks: [ui]
 ```
