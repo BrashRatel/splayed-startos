@@ -1,18 +1,18 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '0.1.0:3',
+  version: '0.1.0:4',
   releaseNotes: {
     en_US:
-      'Adds a Burn history action and button to wipe the wallet, scans and plans and start over (keeps your servers); uses the Bitcoin node on first install when one is already installed, and keeps retrying it until it answers',
+      'Updates splayed (refuses bare hex keys that could be private keys, explains timelocked and miniscript descriptors, asks about the rest of a chain when its TEST FIRST transaction cannot go out) and adds the splayed icon',
     es_ES:
-      'Añade la acción y el botón Quemar historial para borrar billetera, análisis y planes y empezar de nuevo (conserva tus servidores); usa el nodo Bitcoin en la primera instalación si ya existe uno y lo reintenta hasta que responde',
+      'Actualiza splayed (rechaza claves hexadecimales sueltas que podrían ser privadas, explica los descriptores con bloqueo temporal y miniscript, pregunta por el resto de una cadena cuando su transacción TEST FIRST no puede salir) y añade el icono de splayed',
     de_DE:
-      'Neue Aktion und Schaltfläche „Verlauf verbrennen“: Wallet, Scans und Pläne löschen und neu beginnen (Server bleiben); nutzt bei der Erstinstallation den vorhandenen Bitcoin-Knoten und versucht es erneut, bis er antwortet',
+      'Aktualisiert splayed (lehnt nackte Hex-Schlüssel ab, die private Schlüssel sein könnten, erklärt Deskriptoren mit Zeitsperre und Miniscript, fragt nach dem Rest einer Chain, wenn deren TEST-FIRST-Transaktion nicht gesendet werden kann) und fügt das splayed-Symbol hinzu',
     pl_PL:
-      'Dodaje akcję i przycisk Spal historię (usuwa portfel, skany i plany; serwery zostają); używa węzła Bitcoin przy pierwszej instalacji, jeśli istnieje, i ponawia próbę do skutku',
+      'Aktualizuje splayed (odrzuca gołe klucze hex, które mogą być kluczami prywatnymi, wyjaśnia deskryptory z blokadą czasową i miniscript, pyta o resztę łańcucha, gdy jego transakcja TEST FIRST nie może zostać wysłana) i dodaje ikonę splayed',
     fr_FR:
-      'Ajoute l’action et le bouton Brûler l’historique (efface portefeuille, analyses et plans, garde vos serveurs) ; utilise le nœud Bitcoin à la première installation s’il existe et réessaie jusqu’à ce qu’il réponde',
+      'Met à jour splayed (refuse les clés hexadécimales nues qui pourraient être privées, explique les descripteurs à verrou temporel et miniscript, pose la question pour le reste d’une chaîne quand sa transaction TEST FIRST ne peut pas partir) et ajoute l’icône de splayed',
   },
   migrations: {
     up: async () => {},
