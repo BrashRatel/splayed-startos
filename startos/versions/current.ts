@@ -1,18 +1,18 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
 
 export const current = VersionInfo.of({
-  version: '0.1.0:4',
+  version: '0.1.0:5',
   releaseNotes: {
     en_US:
-      'Updates splayed (refuses bare hex keys that could be private keys, explains timelocked and miniscript descriptors, asks about the rest of a chain when its TEST FIRST transaction cannot go out) and adds the splayed icon',
+      'Rebuilt on the released splayed 0.1.0-pre-alpha.1: a failed broadcast that says nothing about the transaction (a gateway error, a node still starting) is no longer recorded as a rejection, and track reports a chain it could not reach instead of exiting quietly',
     es_ES:
-      'Actualiza splayed (rechaza claves hexadecimales sueltas que podrían ser privadas, explica los descriptores con bloqueo temporal y miniscript, pregunta por el resto de una cadena cuando su transacción TEST FIRST no puede salir) y añade el icono de splayed',
+      'Reconstruido sobre splayed 0.1.0-pre-alpha.1: un envío fallido que no dice nada sobre la transacción (error de pasarela, nodo aún iniciando) ya no se registra como rechazo, y track informa de una cadena inalcanzable en lugar de terminar en silencio',
     de_DE:
-      'Aktualisiert splayed (lehnt nackte Hex-Schlüssel ab, die private Schlüssel sein könnten, erklärt Deskriptoren mit Zeitsperre und Miniscript, fragt nach dem Rest einer Chain, wenn deren TEST-FIRST-Transaktion nicht gesendet werden kann) und fügt das splayed-Symbol hinzu',
+      'Neu gebaut auf dem veröffentlichten splayed 0.1.0-pre-alpha.1: Ein fehlgeschlagener Broadcast, der nichts über die Transaktion aussagt (Gateway-Fehler, Knoten startet noch), wird nicht mehr als Ablehnung gespeichert, und track meldet eine nicht erreichbare Chain, statt stillschweigend zu enden',
     pl_PL:
-      'Aktualizuje splayed (odrzuca gołe klucze hex, które mogą być kluczami prywatnymi, wyjaśnia deskryptory z blokadą czasową i miniscript, pyta o resztę łańcucha, gdy jego transakcja TEST FIRST nie może zostać wysłana) i dodaje ikonę splayed',
+      'Przebudowano na wydanym splayed 0.1.0-pre-alpha.1: nieudane wysłanie, które nic nie mówi o transakcji (błąd bramy, węzeł jeszcze się uruchamia), nie jest już zapisywane jako odrzucenie, a track zgłasza nieosiągalny łańcuch zamiast kończyć po cichu',
     fr_FR:
-      'Met à jour splayed (refuse les clés hexadécimales nues qui pourraient être privées, explique les descripteurs à verrou temporel et miniscript, pose la question pour le reste d’une chaîne quand sa transaction TEST FIRST ne peut pas partir) et ajoute l’icône de splayed',
+      'Reconstruit sur splayed 0.1.0-pre-alpha.1 : une diffusion échouée qui ne dit rien de la transaction (erreur de passerelle, nœud en cours de démarrage) n’est plus enregistrée comme un rejet, et track signale une chaîne inaccessible au lieu de se terminer en silence',
   },
   migrations: {
     up: async () => {},
