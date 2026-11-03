@@ -1,7 +1,7 @@
-import { utils } from '@start9labs/start-sdk'
 import { storeJson } from '../fileModels/store.json'
 import { i18n } from '../i18n'
 import { sdk } from '../sdk'
+import { newRpcLogin } from '../utils'
 
 const { InputSpec, Value } = sdk
 
@@ -34,12 +34,9 @@ export const useBitcoind = sdk.Action.withInput(
   async ({ effects, input }) => {
     const store = await storeJson.read().once()
     // The login is made once and kept: the node keeps only its hash, so it can't be re-read.
-    const rpcUser =
-      store?.rpcUser ??
-      `splayed_${utils.getDefaultString({ charset: 'a-z,0-9', len: 8 })}`
-    const rpcPassword =
-      store?.rpcPassword ??
-      utils.getDefaultString({ charset: 'a-z,A-Z,0-9', len: 32 })
+    const login = newRpcLogin()
+    const rpcUser = store?.rpcUser ?? login.rpcUser
+    const rpcPassword = store?.rpcPassword ?? login.rpcPassword
     await storeJson.merge(effects, {
       useBitcoind: input.enabled,
       rpcUser,

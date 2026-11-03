@@ -102,6 +102,20 @@ export const main = sdk.setupMain(async ({ effects }) => {
         ].join(' ')
       : 'true'
 
+  // The node needs a moment after its RPC login is created (it restarts to load it), so the
+  // single check above can come too early. This retries until it works, so the user doesn't have
+  // to restart splayed; the web interface does not wait for it.
+  const watchNode =
+    node && rpcAddress
+      ? [
+          'until splayed config backend detect --kind rpc',
+          `--url http://${rpcAddress}`,
+          `--user ${node.user} --password-env ${rpcPasswordEnv}`,
+          '--proxy none --label "StartOS Bitcoin node" --add >/dev/null 2>&1;',
+          'do sleep 20; done; sleep infinity',
+        ].join(' ')
+      : 'sleep infinity'
+
   return sdk.Daemons.of(effects)
     .addOneshot('chown', {
       subcontainer: sub,
@@ -146,5 +160,14 @@ export const main = sdk.setupMain(async ({ effects }) => {
           }),
       },
       requires: ['detect-node'],
+    })
+    .addDaemon('node-watch', {
+      subcontainer: sub,
+      exec: { command: ['sh', '-c', watchNode], env, user: runAs },
+      ready: {
+        display: null,
+        fn: () => ({ result: 'success', message: null }),
+      },
+      requires: ['ui'],
     })
 })

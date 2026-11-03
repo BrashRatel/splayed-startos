@@ -40,3 +40,15 @@ export function allowedHosts(host: T.Host | null): string[] {
   }
   return [...hosts].sort()
 }
+
+/**
+ * The RPC login splayed registers on the node: made once and kept (the node keeps only a hash of
+ * the password, so it can't be read back). The random suffix keeps a reinstall from colliding
+ * with a user left behind on the node.
+ */
+export function newRpcLogin(): { rpcUser: string; rpcPassword: string } {
+  return {
+    rpcUser: `splayed_${utils.getDefaultString({ charset: 'a-z,0-9', len: 8 })}`,
+    rpcPassword: utils.getDefaultString({ charset: 'a-z,A-Z,0-9', len: 32 }),
+  }
+}

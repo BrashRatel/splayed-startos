@@ -26,6 +26,18 @@ const dict = {
   'Starting splayed': 22,
   'The web interface is ready': 23,
   'The web interface is not ready': 24,
+  'I understand: forget everything and start over': 25,
+  'Removes your imported wallet, fork destinations, scan results and every plan with its PSBTs, signed files and progress. Keeps your network settings and any servers you added, and the web interface token. The network confirmation is reset, so you confirm it again. Nothing on any blockchain changes.': 26,
+  'Even if sent transactions are not confirmed yet': 27,
+  'splayed refuses while a transaction you sent is still unconfirmed, because wiping stops it from following that transaction. Switch this on only if you are sure.': 28,
+  'Get amnesia': 29,
+  'Forget your wallet, scan results and plans, and start over. Keeps your servers and settings.': 30,
+  'This deletes your plans and signed files for good. Back up first if you want to keep them.': 31,
+  Data: 32,
+  'Nothing wiped': 33,
+  'Switch on "I understand" to wipe. Nothing was changed.': 34,
+  Wiped: 35,
+  'Not wiped': 36,
 } as const
 
 /**
