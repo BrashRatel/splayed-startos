@@ -170,7 +170,6 @@ the same token and node login work.
 package_id: 'splayed'
 image: 'dockerBuild upstream-project/docker/Dockerfile (WITH_TOR=0)'
 architectures: [x86_64, aarch64]
-version: '0.1.0:3'
 subcontainers: [splayed]
 volumes: { main: /data, startos: store.json }
 file_models: [store.json]

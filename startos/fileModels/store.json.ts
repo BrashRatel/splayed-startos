@@ -12,6 +12,12 @@ const shape = z.looseObject({
    */
   rpcUser: z.string().optional().catch(undefined),
   rpcPassword: z.string().optional().catch(undefined),
+  /**
+   * The `rpcUser` the "Create RPC Credentials" task was issued for. The task clears when the
+   * user runs it, and dependency init runs again on every update, so without this it would come
+   * back and fail with "user already exists".
+   */
+  rpcTaskUser: z.string().optional().catch(undefined),
 })
 
 export const storeJson = FileHelper.json(

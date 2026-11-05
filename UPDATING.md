@@ -12,8 +12,8 @@ git -C upstream-project describe --tags   # current pin
 gh release view -R BrashRatel/splayed --json tagName -q .tagName   # latest release
 ```
 
-The first package pins the `ui-deploy` branch (the web UI's proxied mode and the `WITH_TOR` build
-argument), which is not merged into `main` yet. Move the pin to `main` or a release tag once it is.
+The package pins a release tag of splayed (the tag is cut on `main` first; see
+[splayed's releasing.md](https://github.com/BrashRatel/splayed/blob/main/docs/dev/releasing.md#release-checklist)).
 
 ## Applying the bump
 
