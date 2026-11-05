@@ -37,13 +37,18 @@ const bitcoind = sdk.Dependency.optional('bitcoind', {
   const creds = await storeJson
     .read((s) =>
       s.rpcUser && s.rpcPassword
-        ? { user: s.rpcUser, password: s.rpcPassword }
+        ? {
+            user: s.rpcUser,
+            password: s.rpcPassword,
+            issued: s.rpcTaskUser === s.rpcUser,
+          }
         : null,
     )
     .const(effects)
-  if (!creds) return
-  // The action only adds a user (it refuses an existing name), so it is run once: a task
-  // without a `when` condition clears when the user runs it.
+  if (!creds || creds.issued) return
+  // The action only adds a user (it refuses an existing name), so the task is issued once per
+  // user: it has no `when` condition and clears when the user runs it, and init runs again on
+  // every update, so `rpcTaskUser` remembers that it was issued.
   await sdk.action.createTask(
     effects,
     'bitcoind',
@@ -59,6 +64,7 @@ const bitcoind = sdk.Dependency.optional('bitcoind', {
       replayId: `splayed-rpc-user-${creds.user}`,
     },
   )
+  await storeJson.merge(effects, { rpcTaskUser: creds.user })
 })
 
 export const dependencies = sdk.Dependencies.of()
