@@ -1,29 +1,21 @@
 import { IMPOSSIBLE, VersionInfo } from '@start9labs/start-sdk'
-import { storeJson } from '../fileModels/store.json'
 
 export const current = VersionInfo.of({
-  version: '0.1.0:7',
+  version: '0.1.0:8',
   releaseNotes: {
     en_US:
-      'Rebuilt on splayed 0.1.0-pre-alpha.2: node RPC backends now speak JSON-RPC 2.0, so a node that only implements 2.0 can be used, and the regtest-tested signing, verify and broadcast paths are wider. Fixes the "Create RPC Credentials" task coming back after an update',
+      'Adds a Server passwords action: passwords for node RPC servers you add in the web interface, given to splayed under the variable named in the server\'s "Password env var" field',
     es_ES:
-      'Reconstruido sobre splayed 0.1.0-pre-alpha.2: los backends RPC de nodo ahora usan JSON-RPC 2.0, de modo que se puede usar un nodo que solo implementa 2.0, y las rutas de firma, verificación y envío probadas en regtest son más amplias. Corrige que la tarea «Create RPC Credentials» reaparezca tras una actualización',
+      'Añade la acción Contraseñas de servidores: contraseñas de los servidores RPC de nodos que añades en la interfaz web, que splayed recibe en la variable indicada en el campo «Password env var» del servidor',
     de_DE:
-      'Neu gebaut auf splayed 0.1.0-pre-alpha.2: Knoten-RPC-Backends sprechen jetzt JSON-RPC 2.0, sodass ein Knoten, der nur 2.0 kann, nutzbar ist, und die auf Regtest getesteten Signier-, Prüf- und Broadcast-Wege sind breiter. Behebt, dass die Aufgabe „Create RPC Credentials“ nach einem Update erneut erscheint',
+      'Neue Aktion „Server-Passwörter“: Passwörter für Knoten-RPC-Server, die du in der Weboberfläche hinzufügst; splayed erhält sie in der Variable aus dem Feld „Password env var“ des Servers',
     pl_PL:
-      'Przebudowano na splayed 0.1.0-pre-alpha.2: backendy RPC węzła używają teraz JSON-RPC 2.0, więc można użyć węzła obsługującego tylko 2.0, a ścieżki podpisywania, weryfikacji i wysyłania testowane w regtest są szersze. Naprawia ponowne pojawianie się zadania „Create RPC Credentials” po aktualizacji',
+      'Dodaje akcję Hasła serwerów: hasła do serwerów RPC węzłów dodanych w interfejsie webowym, przekazywane do splayed w zmiennej podanej w polu „Password env var” serwera',
     fr_FR:
-      'Reconstruit sur splayed 0.1.0-pre-alpha.2 : les backends RPC de nœud utilisent désormais JSON-RPC 2.0, ce qui permet d’utiliser un nœud qui n’implémente que la 2.0, et les chemins de signature, de vérification et de diffusion testés en regtest sont plus larges. Corrige le retour de la tâche « Create RPC Credentials » après une mise à jour',
+      'Ajoute l’action Mots de passe des serveurs : les mots de passe des serveurs RPC de nœuds ajoutés dans l’interface web, transmis à splayed dans la variable indiquée dans le champ « Password env var » du serveur',
   },
   migrations: {
-    // Earlier versions issued the "Create RPC Credentials" task on every update; mark it as done
-    // for the login that already exists so an update doesn't ask for it again.
-    up: async ({ effects }) => {
-      const store = await storeJson.read().once()
-      if (store?.rpcUser && !store.rpcTaskUser) {
-        await storeJson.merge(effects, { rpcTaskUser: store.rpcUser })
-      }
-    },
+    up: async () => {},
     down: IMPOSSIBLE,
   },
 })
