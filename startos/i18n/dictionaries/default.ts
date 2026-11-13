@@ -38,6 +38,17 @@ const dict = {
   'Switch on "I understand" to wipe. Nothing was changed.': 34,
   Wiped: 35,
   'Not wiped': 36,
+  Passwords: 37,
+  'One entry for each server that needs a password. In the web interface, put the same variable name in the server\'s "Password env var" field and the user name in "RPC user".': 38,
+  'Variable name': 39,
+  'The name you put in the server\'s "Password env var" field, for example XBT_RPC_PASSWORD. Capital letters, digits and _; it can\'t start with SPLAYED_.': 40,
+  'Capital letters, digits and _, starting with a letter': 41,
+  Password: 42,
+  'Server passwords': 43,
+  'Passwords for node RPC servers you added in the web interface. splayed reads each from the variable named in the server\'s "Password env var" field.': 44,
+  'splayed restarts when the passwords change. A job running in the web interface is stopped.': 45,
+  'Not saved': 46,
+  'These names are reserved; choose others:': 47,
 } as const
 
 /**

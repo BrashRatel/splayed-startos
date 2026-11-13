@@ -48,3 +48,8 @@ address or a domain); browsers allow the camera only over HTTPS.
   and splayed restarts.
 - **Use the Bitcoin node**: switches your node on or off as a backend. Switching it off leaves it
   in splayed's network settings; remove it there if you no longer want it used.
+- **Server passwords**: passwords for node RPC servers you add yourself in the Web UI (Network,
+  "Add your own backend", under "Node RPC credentials"). splayed never stores a password in its
+  settings; it reads it from the variable named in the server's "Password env var" field. Pick a
+  name there, for example `XBT_RPC_PASSWORD`, then add the same name and the password here. splayed
+  restarts to pick them up.
