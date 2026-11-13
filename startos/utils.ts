@@ -19,6 +19,43 @@ export const runAs = 'splayed'
 export const rpcPasswordEnv = 'SPLAYED_BITCOIND_PASSWORD'
 
 /**
+ * Variables a server password must not be stored under: splayed's own settings (`SPLAYED_*`,
+ * which the package sets itself) and the ones the container's shell and programs rely on.
+ */
+const reservedEnv = new Set([
+  'HOME',
+  'HOSTNAME',
+  'LANG',
+  'LANGUAGE',
+  'LOGNAME',
+  'PATH',
+  'PWD',
+  'SHELL',
+  'TERM',
+  'TMPDIR',
+  'TZ',
+  'USER',
+])
+
+/** The input pattern for a password variable's name (checked again by `serverPasswordEnv`). */
+export const envNamePattern = '^[A-Z][A-Z0-9_]*$'
+
+/**
+ * Whether `name` may carry a password from the Server passwords action: an upper-case shell
+ * variable name that isn't reserved, so a stored password can never replace one of splayed's
+ * settings or the container's own environment.
+ */
+export function isServerPasswordEnv(name: string): boolean {
+  return (
+    new RegExp(envNamePattern).test(name) &&
+    !name.startsWith('SPLAYED_') &&
+    !name.startsWith('LC_') &&
+    !name.startsWith('LD_') &&
+    !reservedEnv.has(name)
+  )
+}
+
+/**
  * The Host headers the UI may answer, one per address of the UI binding: `name[:port]`, as a
  * browser sends it (the default port of the scheme is left out). splayed refuses any other Host
  * (DNS-rebinding defence), so this has to follow the addresses the user adds and removes.

@@ -18,6 +18,14 @@ const shape = z.looseObject({
    * back and fail with "user already exists".
    */
   rpcTaskUser: z.string().optional().catch(undefined),
+  /**
+   * Set by the "Server passwords" action: passwords for servers the user added in splayed's web
+   * interface, each under the environment variable named in that server's "Password env var"
+   * field. splayed reads them from its environment and never stores them in its config.
+   */
+  serverPasswords: z
+    .array(z.object({ variable: z.string(), password: z.string() }))
+    .catch([]),
 })
 
 export const storeJson = FileHelper.json(

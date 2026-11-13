@@ -9,6 +9,7 @@ import { sdk } from './sdk'
 import {
   allowedHosts,
   dataDir,
+  isServerPasswordEnv,
   rpcPasswordEnv,
   runAs,
   tokenFile,
@@ -35,6 +36,7 @@ export const main = sdk.setupMain(async ({ effects }) => {
       use: s.useBitcoind,
       user: s.rpcUser ?? null,
       password: s.rpcPassword ?? null,
+      serverPasswords: s.serverPasswords,
     }))
     .const(effects)
   const node =
@@ -63,14 +65,21 @@ export const main = sdk.setupMain(async ({ effects }) => {
     )
     .const()
 
-  const env: Record<string, string> = {
+  // Passwords from the Server passwords action, each under the variable named in a server's
+  // "Password env var" field. They go first so that nothing below can be replaced by one (the
+  // action already refuses reserved names).
+  const env: Record<string, string> = {}
+  for (const { variable, password } of store?.serverPasswords ?? []) {
+    if (isServerPasswordEnv(variable)) env[variable] = password
+  }
+  Object.assign(env, {
     SPLAYED_DATA_DIR: dataDir,
     SPLAYED_TOR_MODE: 'system',
     SPLAYED_TOR_SOCKS: torSocks ?? '',
     SPLAYED_UI_LISTEN: `0.0.0.0:${uiPort}`,
     SPLAYED_UI_TOKEN_FILE: tokenFile,
     SPLAYED_UI_ALLOWED_HOSTS: hosts.join(','),
-  }
+  })
   // Also while the node is switched off: a node backend left in splayed's settings still names
   // this variable.
   if (store?.password) env[rpcPasswordEnv] = store.password

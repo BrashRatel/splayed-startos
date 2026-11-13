@@ -54,12 +54,19 @@ a node, `node-watch` just sleeps.
 
 ## File Models
 
-`store.json` on the `startos` volume, written only by the **Use the Bitcoin node** action:
+`store.json` on the `startos` volume, written only by the **Use the Bitcoin node** and **Server
+passwords** actions:
 
 - `useBitcoind`: whether the node is used.
 - `rpcUser`, `rpcPassword`: the RPC login splayed registers on the node. Made once (32 random
   characters; the user name has a random suffix, so a reinstall doesn't collide with a user left on
   the node) and never rotated, because the node keeps only a hash.
+- `serverPasswords`: a list of `{ variable, password }` from **Server passwords**. Each password is
+  passed to every splayed process as the environment variable `variable`, which is what a server's
+  "Password env var" field (`password_env`) in splayed's settings names. Names starting with
+  `SPLAYED_`, `LC_` or `LD_` and the container's own variables (`PATH`, `HOME`, ...) are refused, and
+  the package's own `SPLAYED_*` settings are applied after them, so a stored password can't replace
+  one.
 
 splayed's own `config.toml` is upstream's and is edited through the Web UI or the CLI. The package
 writes to it only through `config backend detect --add`, which adds the node to the chain it
@@ -113,6 +120,7 @@ The camera (QR import) works only over HTTPS, so the HTTPS LAN address or a doma
 | Show UI token        | enabled    | any          | Returns the token (masked, copyable)                                                                                                                                                                                                                                                                                                |
 | Reset UI token       | enabled    | running only | Writes a new token, returns it, restarts splayed; open tabs must sign in again                                                                                                                                                                                                                                                      |
 | Use the Bitcoin node | enabled    | any          | Toggles `useBitcoind`; makes the RPC login the first time. Switching off leaves the node in splayed's settings (removed in the Web UI)                                                                                                                                                                                              |
+| Server passwords     | enabled    | any          | Stores passwords for RPC servers added in the Web UI, each under the variable named in that server's "Password env var" field, and passes them to splayed as environment variables. splayed restarts when they change. Refuses reserved names (`SPLAYED_*`, `PATH`, ...)                                                            |
 | Burn history         | enabled    | any          | Runs `splayed wipe --yes` (needs the "I understand" toggle; "Even if sent transactions are not confirmed yet" adds `--force`). Forgets the wallet, destinations, scan results and all plans, resets the network confirmation; keeps the network settings, added servers and the token. Same as the Web UI's **Burn history** button |
 
 ## Tasks
